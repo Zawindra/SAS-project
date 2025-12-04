@@ -1,13 +1,21 @@
 import express from "express";
-import * as controller from "../controllers/bookController.js";
+import upload from "../middlewares/upload.js";
+import authenticateToken from "../middlewares/authMiddleware.js";
+
+import {
+  getBooks,
+  getBookById,
+  createBook,
+  updateBook,
+  deleteBook,
+} from "../controllers/bookController.js";
 
 const router = express.Router();
 
-router.get("/", controller.getAll);
-router.get("/:id", controller.getOne);
-router.post("/", controller.create);
-router.put("/:id", controller.update);
-router.delete("/:id", controller.remove);
+router.get("/", getBooks);
+router.get("/:id", getBookById);
+router.post("/", upload.single("file"), createBook);
+router.put("/:id", authenticateToken, upload.single("cover"), updateBook);
+router.delete("/:id", authenticateToken, deleteBook);
 
 export default router;
-    

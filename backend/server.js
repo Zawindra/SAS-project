@@ -1,22 +1,38 @@
 import express from "express";
-import dotenv from "dotenv";
 import cors from "cors";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+
 import bookRoutes from "./routes/bookRoutes.js";
-import { errorHandler } from "./middlewares/errorHandler.js";
+import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
 
 const app = express();
+
+// FIX __dirname untuk ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Middleware dasar
 app.use(cors());
 app.use(express.json());
 
-// Simple health check
-app.get("/health", (req, res) => res.json({ status: "ok" }));
-
+// STATIC UPLOADS (WAJIB UNTUK MENAMPILKAN GAMBAR)
+app.use("/uploads", express.static("uploads"));
 app.use("/api/books", bookRoutes);
 
-// Error handler (must be after routes)
-app.use(errorHandler);
+// ROUTES
+app.use("/api/books", bookRoutes);
+app.use("/api/auth", authRoutes);
 
-const port = process.env.PORT || 4000;
-app.listen(port, () => console.log(`Server running on port ${port}`));
+// DEFAULT ROUTE
+app.get("/", (req, res) => {
+  res.send("Book Store API is running...");
+});
+
+// RUN SERVER
+app.listen(4000, () =>
+  console.log("🚀 Server running on http://localhost:4000")
+);
