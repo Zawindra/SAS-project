@@ -1,23 +1,32 @@
+// middlewares/authMiddleware.js
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+
 dotenv.config();
 
-export default function authMiddleware(req, res, next) {
-  try {
-    const auth = req.headers.authorization;
+// === Verify Token ===
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
-    if (!auth || !auth.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "Missing or invalid authorization header" });
-    }
+  if (!token)
+    return res.status(401).json({ message: "Access denied. No token provided." });
 
-    const token = auth.split(" ")[1];
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err)
+      return res.status(403).json({ message: "Invalid or expired token" });
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    req.user = decoded; // berisi id, email, role dsb.
-
+    req.user = decoded; // { id, email, role }
     next();
-  } catch (err) {
-    return res.status(401).json({ message: "Invalid or expired token" });
+  });
+};
+
+// === Only Admin ===
+export const requireAdmin = (req, res, next) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Admins only" });
   }
-}
+  next();
+};
+
+export default authenticateToken;

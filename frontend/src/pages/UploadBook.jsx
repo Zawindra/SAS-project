@@ -1,17 +1,29 @@
 import { useState } from "react";
 import axios from "axios";
-import { getToken } from "../utils/auth";
+import { getToken, getUser } from "../utils/auth";
 import { useNavigate } from "react-router-dom";
 
 export default function UploadBook() {
+  const navigate = useNavigate();
+
+  // Cek role admin
+  const role = getUser()?.role;
+  if (role !== "admin") {
+    return (
+      <div style={{ padding: 40, textAlign: "center" }}>
+        <h2 style={{ color: "red" }}>Access Forbidden</h2>
+        <p>You don't have permission to upload books.</p>
+      </div>
+    );
+  }
+
+  // State form
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [price, setPrice] = useState("");
   const [genre, setGenre] = useState("");
   const [description, setDescription] = useState("");
   const [cover, setCover] = useState(null);
-
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +47,7 @@ export default function UploadBook() {
       alert("Book uploaded successfully!");
       navigate("/");
     } catch (err) {
-      console.log("Upload error:", err);
+      console.log(err);
       alert("Failed to upload book.");
     }
   };
@@ -56,12 +68,32 @@ export default function UploadBook() {
       </h2>
 
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <input
+          type="text"
+          placeholder="Book Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+          style={inputStyle}
+        />
 
-        <input type="text" placeholder="Book Title" value={title} onChange={(e) => setTitle(e.target.value)} required style={inputStyle} />
+        <input
+          type="text"
+          placeholder="Author"
+          value={author}
+          onChange={(e) => setAuthor(e.target.value)}
+          required
+          style={inputStyle}
+        />
 
-        <input type="text" placeholder="Author" value={author} onChange={(e) => setAuthor(e.target.value)} required style={inputStyle} />
-
-        <input type="number" placeholder="Price" value={price} onChange={(e) => setPrice(e.target.value)} required style={inputStyle} />
+        <input
+          type="number"
+          placeholder="Price"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          required
+          style={inputStyle}
+        />
 
         <select value={genre} onChange={(e) => setGenre(e.target.value)} required style={inputStyle}>
           <option value="">Select Genre</option>
@@ -71,23 +103,36 @@ export default function UploadBook() {
           <option value="Biography">Biography</option>
         </select>
 
-        <textarea placeholder="Description" rows="4" value={description} onChange={(e) => setDescription(e.target.value)} style={{ ...inputStyle, height: "100px" }} />
+        <textarea
+          placeholder="Description"
+          rows="4"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          style={{ ...inputStyle, height: "100px" }}
+        />
 
-        <input type="file" accept="image/*" onChange={(e) => setCover(e.target.files[0])} style={inputStyle} />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setCover(e.target.files[0])}
+          style={inputStyle}
+        />
 
-        <button type="submit" style={{
-          padding: "12px 0",
-          background: "#0b63a8",
-          color: "#fff",
-          borderRadius: 6,
-          fontSize: 16,
-          cursor: "pointer",
-          border: "none",
-          marginTop: 10,
-        }}>
+        <button
+          type="submit"
+          style={{
+            padding: "12px 0",
+            background: "#0b63a8",
+            color: "#fff",
+            borderRadius: 6,
+            fontSize: 16,
+            cursor: "pointer",
+            border: "none",
+            marginTop: 10,
+          }}
+        >
           Upload Book
         </button>
-
       </form>
     </div>
   );

@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 
 import bookRoutes from "./routes/bookRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use("/api/books", bookRoutes);
 // ROUTES
 app.use("/api/books", bookRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 
 // DEFAULT ROUTE
 app.get("/", (req, res) => {

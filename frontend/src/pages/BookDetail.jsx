@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { isLoggedIn, getToken } from "../utils/auth";
+import { getUser, isLoggedIn, getToken } from "../utils/auth";
 
 export default function BookDetail() {
   const { id } = useParams();
@@ -44,6 +44,8 @@ export default function BookDetail() {
   };
 
   if (!book) return <div style={{ padding: 30 }}>Loading...</div>;
+
+  const role = getUser()?.role;
 
   return (
     <div
@@ -129,7 +131,8 @@ export default function BookDetail() {
         </div>
 
         {/* Action Buttons */}
-        {isLoggedIn() && (
+        {role === "admin" ? (
+          // ADMIN BISA EDIT & DELETE
           <div
             style={{
               marginTop: 35,
@@ -165,6 +168,23 @@ export default function BookDetail() {
               }}
             >
               Delete Book
+            </button>
+          </div>
+        ) : (
+          // USER BIASA TOMBOL BELI
+          <div style={{ marginTop: 35, textAlign: "center" }}>
+            <button
+              style={{
+                padding: "12px 30px",
+                background: "#28a745",
+                color: "#fff",
+                borderRadius: 8,
+                border: "none",
+                fontSize: 18,
+                cursor: "pointer",
+              }}
+            >
+              Beli Buku
             </button>
           </div>
         )}

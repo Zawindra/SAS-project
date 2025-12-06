@@ -1,68 +1,61 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
+/* =========================================
+   CLEAN RESET – Hilangkan semua style bawaan
+   ========================================= */
+* {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* Gunakan font universal */
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: "Inter", Arial, sans-serif;
+  background-color: #f5f7fb;
+  color: #1a1a1a;
+  -webkit-font-smoothing: antialiased;
 }
 
+/* Link tanpa underline */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Hilangkan bullet list */
+ul, li {
+  list-style: none;
+}
+
+/* Button default clean */
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+  border: none;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  font-family: inherit;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* Input modern */
+input, select, textarea {
+  font-family: inherit;
+  outline: none;
+}
+
+/* Flex center helper (optional) */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Container global max-width */
+.container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Disable highlight ketika click */
+* {
+  -webkit-tap-highlight-color: transparent;
 }
