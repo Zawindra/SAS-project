@@ -1,3 +1,5 @@
+// backend/services/bookService.js
+
 import db from "../config/db.js";
 import fs from "fs";
 import path from "path";
@@ -13,17 +15,28 @@ export const getBookById = async (id) => {
 };
 
 export const createBook = async (data) => {
-  const { title, author, price, genre, description, cover_url } = data;
+  const {
+    title,
+    author,
+    price,
+    genre,
+    year,
+    discount,
+    description,
+    cover_url,
+  } = data;
 
   const [result] = await db.query(
-    `INSERT INTO books (title, author, price, genre, description, cover_url, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())`,
-    [title, author, price, genre, description, cover_url]
+    `INSERT INTO books 
+      (title, author, price, genre, year, discount, description, cover_url, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
+    [title, author, price, genre, year, discount, description, cover_url]
   );
 
   const [rows] = await db.query("SELECT * FROM books WHERE id=?", [
     result.insertId,
   ]);
+
   return rows[0];
 };
 
@@ -33,11 +46,13 @@ export const updateBook = async (id, data) => {
     author,
     price,
     genre,
+    year,
+    discount,
     description,
-    cover_url // path baru
+    cover_url,
   } = data;
 
-  // Ambil data lama
+  // Ambil cover lama
   const [oldRows] = await db.query("SELECT cover_url FROM books WHERE id=?", [
     id,
   ]);
@@ -45,9 +60,7 @@ export const updateBook = async (id, data) => {
 
   const oldCover = oldRows[0].cover_url;
 
-  /**
-   * SAFE DELETE — Tidak akan error meski file lama tidak ada!
-   */
+  // Hapus file lama jika ada cover baru
   if (cover_url && oldCover) {
     const oldPath = path.join(
       process.cwd(),
@@ -60,18 +73,16 @@ export const updateBook = async (id, data) => {
         fs.unlinkSync(oldPath);
       }
     } catch (err) {
-      console.log("⚠ Gagal hapus cover lama:", err.message);
+      console.log("⚠ Failed to delete old cover:", err.message);
     }
   }
 
-  /**
-   * UPDATE DB
-   */
+  // Update DB
   await db.query(
-    `UPDATE books
-    SET title=?, author=?, price=?, genre=?, description=?, cover_url=?, updated_at=NOW()
-    WHERE id=?`,
-    [title, author, price, genre, description, cover_url, id]
+    `UPDATE books 
+     SET title=?, author=?, price=?, genre=?, year=?, discount=?, description=?, cover_url=?, updated_at=NOW()
+     WHERE id=?`,
+    [title, author, price, genre, year, discount, description, cover_url, id]
   );
 
   const [rows] = await db.query("SELECT * FROM books WHERE id=?", [id]);
@@ -91,12 +102,12 @@ export const deleteBook = async (id) => {
       path.basename(oldCover)
     );
 
-    if (fs.existsSync(oldPath)) {
-      try {
+    try {
+      if (fs.existsSync(oldPath)) {
         fs.unlinkSync(oldPath);
-      } catch (err) {
-        console.log("Error deleting file:", err.message);
       }
+    } catch (err) {
+      console.log("⚠ Delete failed:", err.message);
     }
   }
 

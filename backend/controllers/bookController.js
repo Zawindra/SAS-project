@@ -1,3 +1,5 @@
+// backend/controllers/bookController.js
+
 import * as bookService from "../services/bookService.js";
 
 export async function getBooks(req, res, next) {
@@ -20,7 +22,8 @@ export async function getBookById(req, res, next) {
 
 export async function createBook(req, res, next) {
   try {
-    const { title, author, price, genre, description } = req.body;
+    const { title, author, price, genre, year, discount, description } =
+      req.body;
 
     let cover_url = null;
     if (req.file) {
@@ -32,6 +35,8 @@ export async function createBook(req, res, next) {
       author,
       price,
       genre,
+      year,
+      discount,
       description,
       cover_url,
     });
@@ -48,27 +53,31 @@ export async function createBook(req, res, next) {
 export async function updateBook(req, res, next) {
   try {
     const id = req.params.id;
-    const { title, author, price, genre, description } = req.body;
+
+    const { title, author, price, genre, year, discount, description } =
+      req.body;
 
     let cover_url = req.body.cover_url || null;
 
-    // Jika upload file baru → gunakan ini
+    // Jika upload file baru
     if (req.file) {
       cover_url = `/uploads/${req.file.filename}`;
     }
 
-    const updated = await bookService.updateBook(id, {
+    const updatedBook = await bookService.updateBook(id, {
       title,
       author,
       price,
       genre,
+      year,
+      discount,
       description,
       cover_url,
     });
 
     res.json({
       message: "Book updated successfully",
-      data: updated,
+      data: updatedBook,
     });
   } catch (error) {
     next(error);

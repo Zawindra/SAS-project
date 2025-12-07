@@ -24,6 +24,8 @@ export default function UploadBook() {
   const [genre, setGenre] = useState("");
   const [description, setDescription] = useState("");
   const [cover, setCover] = useState(null);
+  const [year, setYear] = useState("");
+  const [discount, setDiscount] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,6 +36,8 @@ export default function UploadBook() {
     formData.append("price", price);
     formData.append("genre", genre);
     formData.append("description", description);
+    formData.append("year", year);
+    formData.append("discount", discount);
     if (cover) formData.append("cover", cover);
 
     try {
@@ -67,7 +71,10 @@ export default function UploadBook() {
         Upload New Book
       </h2>
 
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: "flex", flexDirection: "column", gap: 16 }}
+      >
         <input
           type="text"
           placeholder="Book Title"
@@ -88,6 +95,14 @@ export default function UploadBook() {
 
         <input
           type="number"
+          placeholder="Year"
+          value={year}
+          onChange={(e) => setYear(e.target.value)}
+          style={inputStyle}
+        />
+
+        <input
+          type="number"
           placeholder="Price"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
@@ -95,7 +110,20 @@ export default function UploadBook() {
           style={inputStyle}
         />
 
-        <select value={genre} onChange={(e) => setGenre(e.target.value)} required style={inputStyle}>
+        <input
+          type="number"
+          placeholder="Discount (%)"
+          value={discount}
+          onChange={(e) => setDiscount(e.target.value)}
+          style={inputStyle}
+        />
+
+        <select
+          value={genre}
+          onChange={(e) => setGenre(e.target.value)}
+          required
+          style={inputStyle}
+        >
           <option value="">Select Genre</option>
           <option value="Novel">Novel</option>
           <option value="Fantasy">Fantasy</option>

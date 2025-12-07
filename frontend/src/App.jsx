@@ -9,6 +9,7 @@ import Login from "./pages/login";
 import Register from "./pages/Register";
 import UploadBook from "./pages/UploadBook";
 import BookDetail from "./pages/BookDetail";
+import EditBook from "./pages/EditBook";  // <-- ⚡ ADD THIS
 
 import { isAdmin } from "./utils/auth";
 
@@ -38,6 +39,12 @@ function Layout() {
           <Route
             path="/upload"
             element={isAdmin() ? <UploadBook /> : <Login />}
+          />
+
+          {/* ⚡⚡ NEW ROUTE: EDIT BOOK (ADMIN ONLY) */}
+          <Route
+            path="/edit-book/:id"
+            element={isAdmin() ? <EditBook /> : <Login />}
           />
         </Routes>
       </div>

@@ -3,11 +3,12 @@ import { useState } from "react";
 import axios from "axios";
 import { saveAuth } from "../utils/auth";
 import { useNavigate, Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPass, setShowPass] = useState(false); // 👈 toggle state
+  const [showPass, setShowPass] = useState(false);
 
   const navigate = useNavigate();
 
@@ -20,10 +21,24 @@ export default function Login() {
       });
 
       saveAuth(res.data.token, res.data.user);
-      alert("Login success!");
+
+      // SWEET ALERT SUCCESS
+      await Swal.fire({
+        icon: "success",
+        title: "Login Successful",
+        text: `Welcome back, ${res.data.user.username}!`,
+        confirmButtonColor: "#0b63a8",
+      });
+
       navigate("/");
     } catch (err) {
-      alert("Invalid email or password");
+      // SWEET ALERT ERROR
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text: "Incorrect email or password",
+        confirmButtonColor: "#d9534f",
+      });
     }
   };
 
@@ -74,7 +89,7 @@ export default function Login() {
             style={inputStyle}
           />
 
-          {/* PASSWORD INPUT + ICON */}
+          {/* Password + Toggle */}
           <div style={{ position: "relative" }}>
             <input
               type={showPass ? "text" : "password"}
@@ -85,7 +100,10 @@ export default function Login() {
               style={{ ...inputStyle, width: "100%" }}
             />
 
-            <span onClick={() => setShowPass(!showPass)} style={eyeStyle}>
+            <span
+              onClick={() => setShowPass(!showPass)}
+              style={eyeStyle}
+            >
               <i
                 className={
                   showPass ? "fa-solid fa-eye-slash" : "fa-solid fa-eye"
