@@ -1,103 +1,50 @@
 📚 BookStore — Fullstack Book Management App
 
-BookStore adalah aplikasi berbasis MERN-style (React + Express + MySQL) untuk menampilkan daftar buku, melihat detail, menambahkan ke keranjang, serta fitur admin untuk upload, edit, dan hapus buku.
-
-Aplikasi ini mendukung guest user, user login, dan admin panel.
+BookStore adalah aplikasi React + Express + MySQL dengan fitur role lengkap (Guest, User, Admin) dan cart system.
 
 🚀 Features
-👤 Guest User
+👤 Guest
 
-Bisa melihat semua buku
+Melihat semua buku
 
 Tidak bisa membeli (harus login)
 
-Tombol Login / Register muncul di navbar
+Navbar menampilkan Login / Register
 
-👤 User (Logged In)
+👤 User
 
-Bisa membeli buku (Add to Cart)
+Bisa beli buku (Add to Cart)
 
-Keranjang muncul di navbar dengan badge jumlah item
+Keranjang tampil + jumlah item
 
-Bisa menambah & mengurangi jumlah pembelian di cart
+Qty bisa tambah/kurang
 
-🛒 Cart System
+👨‍💼 Admin
 
-Disimpan di localStorage
+CRUD Buku
 
-Badge jumlah item real-time
-
-Tambah + Kurang quantity
-
-👨‍💼 Admin Role
-
-CRUD Buku:
-
-Upload buku
-
-Edit buku
-
-Delete buku
+Upload cover / update / delete
 
 Tidak memiliki cart
 
-🛠️ Tech Stack
-Frontend
+🛠 Tech Stack
 
-React + Vite
+Frontend: React, Vite, Router, SweetAlert2
+Backend: Express, MySQL, JWT, Multer
 
-React Router
+📌 Copy Sections
 
-SweetAlert2
+Kamu cukup klik area kode, lalu VSCode / GitHub akan otomatis menampilkan tombol copy.
 
-Inline CSS Styling
-
-Backend
-
-Node.js + Express
-
-MySQL
-
-JWT Authentication
-
-Multer (upload cover book)
-
-Database
-
-MySQL (books table + users table)
-
-📁 Folder Structure (Simplified)
-project/
-│── backend/
-│   ├── controllers/
-│   ├── services/
-│   ├── middlewares/
-│   ├── uploads/        # (ignored by Git)
-│   ├── app.js
-│   └── ...
-│
-└── frontend/
-    ├── src/
-    │   ├── components/
-    │   ├── pages/
-    │   ├── utils/
-    │   └── ...
-
-⚙️ Installation
-1️⃣ Clone Repository
+📥 Clone Repo
 git clone https://github.com/username/bookstore.git
 cd bookstore
 
-🖥️ Backend Setup
-
-Masuk folder backend:
-
+⚙ Instal Backend
 cd backend
 npm install
 
-
-Buat file .env:
-
+🧩 Create .env File
 PORT=4000
 DB_HOST=localhost
 DB_USER=root
@@ -105,32 +52,26 @@ DB_PASS=
 DB_NAME=bookstore
 JWT_SECRET=your_secret_key
 
-
-Jalankan backend:
-
+▶ Run Backend
 npm start
 
-💻 Frontend Setup
-
-Masuk folder frontend:
-
+💻 Setup Frontend
 cd frontend
 npm install
 npm run dev
 
-➕ Admin Account
-
-Buat admin (manual atau seed):
-
+🔑 Default Admin
 email: admin@example.com
 password: admin123
 
-📝 Notes
+📁 Folder Structure
+project/
+│── backend/
+│── frontend/
+└── README.md
 
-Folder uploads/ dan .env tidak masuk git (ignored)
+📌 Notes
 
-Pastikan backend sudah running sebelum membuka frontend
+uploads/ & .env sudah ada di .gitignore
 
-📌 License
-
-MIT — Free to use and modify.
+Pastikan MySQL berjalan sebelum start backend
