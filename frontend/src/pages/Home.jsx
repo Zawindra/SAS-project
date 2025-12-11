@@ -1,6 +1,8 @@
+//Home.jsx
+
 import { useEffect, useState } from "react";
 import axios from "axios";
-import BookCard from "../components/bookCard";
+import BookCard from "../components/BookCard";
 import HeroBanner from "../components/HeroBanner";
 
 export default function Home() {
@@ -30,7 +32,6 @@ export default function Home() {
   useEffect(() => {
     let results = books;
 
-    // SEARCH
     if (searchTerm.trim() !== "") {
       results = results.filter((book) =>
         `${book.title} ${book.author}`
@@ -39,7 +40,6 @@ export default function Home() {
       );
     }
 
-    // GENRE FILTER
     if (selectedGenre !== "all") {
       results = results.filter((book) => book.genre === selectedGenre);
     }
@@ -72,9 +72,9 @@ export default function Home() {
           display: "flex",
           justifyContent: "space-between",
           gap: 20,
+          flexWrap: "wrap",
         }}
       >
-        {/* SEARCH */}
         <input
           type="text"
           placeholder="Search books..."
@@ -87,10 +87,10 @@ export default function Home() {
             border: "1px solid #ddd",
             fontSize: 17,
             outline: "none",
+            minWidth: 220,
           }}
         />
 
-        {/* GENRE FILTER */}
         <select
           value={selectedGenre}
           onChange={(e) => setSelectedGenre(e.target.value)}

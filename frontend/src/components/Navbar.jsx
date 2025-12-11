@@ -10,35 +10,54 @@ export default function Navbar() {
   const [openDropdown, setOpenDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Hide navbar on login/register pages
-  if (location.pathname === "/login" || location.pathname === "/register") {
-    return null;
-  }
+  const [openCart, setOpenCart] = useState(false);
+  const cartRef = useRef(null);
 
-  const user = getUser();
-  const role = user?.role;
+  const [cart, setCart] = useState([]);
 
-  // Close dropdown if click outside
+  // LOAD CART AT START
   useEffect(() => {
-    const handleOutside = (e) => {
+    const c = JSON.parse(localStorage.getItem("cart") || "[]");
+    setCart(c);
+  }, []);
+
+  // UPDATE CART IF STORAGE UPDATED
+  useEffect(() => {
+    const handler = () => {
+      const c = JSON.parse(localStorage.getItem("cart") || "[]");
+      setCart(c);
+    };
+    window.addEventListener("storage", handler);
+    return () => window.removeEventListener("storage", handler);
+  }, []);
+
+  // TOTAL ITEM COUNT
+  const cartCount = cart.reduce((sum, item) => sum + item.qty, 0);
+
+  // CLOSE DROPDOWNS //
+  useEffect(() => {
+    const handler = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setOpenDropdown(false);
       }
+      if (cartRef.current && !cartRef.current.contains(e.target)) {
+        setOpenCart(false);
+      }
     };
-    document.addEventListener("mousedown", handleOutside);
-    return () => document.removeEventListener("mousedown", handleOutside);
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // LOGOUT //
   const handleLogout = () => {
     Swal.fire({
       title: "Logout?",
-      text: "You will be logged out from your account.",
+      text: "You will be logged out.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d9534f",
       cancelButtonColor: "#6c757d",
       confirmButtonText: "Logout",
-      reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
         logout();
@@ -46,6 +65,38 @@ export default function Navbar() {
       }
     });
   };
+
+  // CART FUNCTIONS //
+  const saveCart = (newCart) => {
+    setCart(newCart);
+    localStorage.setItem("cart", JSON.stringify(newCart));
+    window.dispatchEvent(new Event("storage"));
+  };
+
+  const increaseQty = (id) => {
+    const updated = cart.map((item) =>
+      item.id === id ? { ...item, qty: item.qty + 1 } : item
+    );
+    saveCart(updated);
+  };
+
+  const decreaseQty = (id) => {
+    let updated = cart
+      .map((item) =>
+        item.id === id ? { ...item, qty: item.qty - 1 } : item
+      )
+      .filter((item) => item.qty > 0);
+
+    saveCart(updated);
+  };
+
+  // HIDE NAVBAR AT LOGIN/REGISTER //
+  if (location.pathname === "/login" || location.pathname === "/register") {
+    return null;
+  }
+
+  const user = getUser();
+  const role = user?.role;
 
   return (
     <nav style={styles.nav}>
@@ -73,7 +124,62 @@ export default function Navbar() {
               </Link>
             )}
 
-            {/* ACCOUNT BUTTON */}
+            {/* CART BUTTON */}
+            {role !== "admin" && (
+              <div style={{ position: "relative" }} ref={cartRef}>
+                <button
+                  onClick={() => setOpenCart(!openCart)}
+                  style={styles.cartButton}
+                >
+                  <i
+                    className="fa-solid fa-cart-shopping"
+                    style={{ fontSize: 22, color: "#0b63a8" }}
+                  ></i>
+
+                  {cartCount > 0 && (
+                    <span style={styles.cartBadge}>{cartCount}</span>
+                  )}
+                </button>
+
+                {/* CART POPUP */}
+                {openCart && (
+                  <div style={styles.cartDropdown}>
+                    <h4 style={{ marginBottom: 10 }}>Your Cart</h4>
+
+                    {cart.length === 0 ? (
+                      <p style={{ color: "#777" }}>Cart is empty.</p>
+                    ) : (
+                      cart.map((item) => (
+                        <div
+                          key={item.id}
+                          style={styles.cartItem}
+                        >
+                          <span style={{ flex: 1 }}>{item.title}</span>
+
+                          <div style={styles.qtyWrapper}>
+                            <button
+                              onClick={() => decreaseQty(item.id)}
+                              style={styles.qtyBtn}
+                            >
+                              –
+                            </button>
+                            <span>{item.qty}</span>
+                            <button
+                              onClick={() => increaseQty(item.id)}
+                              style={styles.qtyBtn}
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ACCOUNT DROPDOWN */}
             <div style={styles.accountWrapper} ref={dropdownRef}>
               <div
                 style={styles.userInfo}
@@ -86,7 +192,6 @@ export default function Navbar() {
                 <span style={styles.caret}>▼</span>
               </div>
 
-              {/* DROPDOWN */}
               {openDropdown && (
                 <div style={styles.dropdown}>
                   <button onClick={handleLogout} style={styles.dropdownItem}>
@@ -149,6 +254,60 @@ const styles = {
     fontSize: 14,
     textDecoration: "none",
     cursor: "pointer",
+  },
+
+  cartButton: {
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    position: "relative",
+  },
+
+  cartBadge: {
+    position: "absolute",
+    top: -6,
+    right: -10,
+    background: "#e63946",
+    color: "#fff",
+    borderRadius: "50%",
+    padding: "3px 7px",
+    fontSize: 12,
+    fontWeight: "700",
+  },
+
+  cartDropdown: {
+    position: "absolute",
+    top: 45,
+    right: 0,
+    width: 280,
+    background: "#fff",
+    borderRadius: 12,
+    padding: 15,
+    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+    zIndex: 30,
+  },
+
+  cartItem: {
+    display: "flex",
+    justifyContent: "space-between",
+    marginBottom: 12,
+    alignItems: "center",
+  },
+
+  qtyWrapper: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+  },
+
+  qtyBtn: {
+    width: 26,
+    height: 26,
+    borderRadius: 6,
+    border: "1px solid #ccc",
+    background: "#f1f1f1",
+    cursor: "pointer",
+    fontWeight: 700,
   },
 
   accountWrapper: {

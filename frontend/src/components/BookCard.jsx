@@ -1,7 +1,8 @@
+//BookCard.jsx
+
 import { Link } from "react-router-dom";
 
 export default function BookCard({ book }) {
-  // Hitung harga setelah diskon
   const discountedPrice =
     book.discount > 0
       ? book.price - (book.price * book.discount) / 100
@@ -10,10 +11,7 @@ export default function BookCard({ book }) {
   return (
     <Link
       to={`/book/${book.id}`}
-      style={{
-        textDecoration: "none",
-        color: "inherit",
-      }}
+      style={{ textDecoration: "none", color: "inherit" }}
     >
       <div
         style={{
@@ -23,11 +21,12 @@ export default function BookCard({ book }) {
           boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
           transition: "0.2s",
           position: "relative",
+          cursor: "pointer",
         }}
         onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
         onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
       >
-        {/* BADGE DISKON */}
+        {/* DISCOUNT BADGE */}
         {book.discount > 0 && (
           <span
             style={{
@@ -47,7 +46,7 @@ export default function BookCard({ book }) {
           </span>
         )}
 
-        {/* COVER */}
+        {/* COVER BOOK */}
         <img
           src={
             book.cover_url
@@ -70,7 +69,7 @@ export default function BookCard({ book }) {
         {/* AUTHOR */}
         <p style={{ margin: "2px 0", color: "#666" }}>{book.author}</p>
 
-        {/* HARGA */}
+        {/* PRICE */}
         {book.discount > 0 ? (
           <div style={{ marginTop: 8 }}>
             <p

@@ -6,7 +6,7 @@ import Footer from "./components/footer";
 
 import Home from "./pages/home";
 import Login from "./pages/login";
-import Register from "./pages/Register";
+import Register from "./pages/register";
 import UploadBook from "./pages/UploadBook";
 import BookDetail from "./pages/BookDetail";
 import EditBook from "./pages/EditBook";  // <-- ⚡ ADD THIS

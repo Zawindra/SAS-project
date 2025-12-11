@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { getUser, getToken } from "../utils/auth";
+import { getUser, getToken, isLoggedIn } from "../utils/auth";
+import Swal from "sweetalert2";
 
 export default function BookDetail() {
   const { id } = useParams();
@@ -20,6 +21,49 @@ export default function BookDetail() {
       console.log(error);
     }
   };
+
+  // =========================
+  // ADD TO CART (WITH QTY)
+  // =========================
+  const handleAddToCart = () => {
+    if (!isLoggedIn()) {
+      return Swal.fire({
+        icon: "info",
+        title: "Login Required",
+        text: "You must login before buying books.",
+        confirmButtonColor: "#0b63a8",
+      }).then(() => navigate("/login"));
+    }
+
+    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+    // check if exists
+    const exist = cart.find((c) => c.id === book.id);
+
+    if (exist) {
+      exist.qty += 1; // tambah qty
+    } else {
+      cart.push({
+        id: book.id,
+        title: book.title,
+        qty: 1,
+      });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    Swal.fire({
+      icon: "success",
+      title: "Added to Cart!",
+      text: `"${book.title}" has been added to your cart.`,
+      confirmButtonColor: "#28a745",
+    });
+
+    // notify navbar
+    window.dispatchEvent(new Event("storage"));
+  };
+
+  // =========================
 
   const handleDelete = async () => {
     const confirmDelete = window.confirm("Are you sure?");
@@ -41,6 +85,7 @@ export default function BookDetail() {
   if (!book) return <div style={{ padding: 30 }}>Loading...</div>;
 
   const role = getUser()?.role;
+
   const discountedPrice = book.discount
     ? book.price - (book.price * book.discount) / 100
     : book.price;
@@ -66,7 +111,7 @@ export default function BookDetail() {
           boxShadow: "0 8px 30px rgba(0,0,0,0.1)",
         }}
       >
-        {/* Tombol Kembali */}
+        {/* BACK BUTTON */}
         <button
           onClick={() => navigate("/")}
           style={{
@@ -81,28 +126,22 @@ export default function BookDetail() {
             display: "flex",
             alignItems: "center",
             gap: 8,
-            transition: "0.2s",
           }}
-          onMouseOver={(e) => (e.target.style.background = "#d8e8ff")}
-          onMouseOut={(e) => (e.target.style.background = "#e6f0ff")}
         >
-          <i className="fa-solid fa-arrow-left"></i> Kembali ke Home
+          <i className="fa-solid fa-arrow-left"></i> Back to Home
         </button>
 
-        {/* KONTEN 2 KOLOM */}
+        {/* CONTENT */}
         <div
           style={{
             display: "flex",
             gap: 50,
-            justifyContent: "center",
-            alignItems: "flex-start",
             flexWrap: "wrap",
           }}
         >
-
           {/* COVER */}
-          <div style={{ flex: "0 0 350px", textAlign: "center" }}>
-            <div style={{ position: "relative", width: "100%" }}>
+          <div style={{ flex: "0 0 350px" }}>
+            <div style={{ position: "relative" }}>
               {book.discount > 0 && (
                 <span
                   style={{
@@ -140,16 +179,13 @@ export default function BookDetail() {
 
           {/* DETAIL */}
           <div style={{ flex: "1 1 500px" }}>
-            <h1 style={{ fontSize: 36, fontWeight: 800, marginBottom: 5 }}>
-              {book.title}
-            </h1>
-
-            <p style={{ fontSize: 18, color: "#666" }}>
+            <h1 style={{ fontSize: 36, fontWeight: 800 }}>{book.title}</h1>
+            <p>
               By <strong>{book.author}</strong>
             </p>
 
-            {/* HARGA */}
-            <div style={{ marginTop: 20, marginBottom: 20 }}>
+            {/* PRICE */}
+            <div style={{ marginTop: 20 }}>
               {book.discount > 0 ? (
                 <>
                   <p
@@ -173,18 +209,14 @@ export default function BookDetail() {
                   </p>
                 </>
               ) : (
-                <p
-                  style={{
-                    fontSize: 32,
-                    fontWeight: 900,
-                  }}
-                >
+                <p style={{ fontSize: 32, fontWeight: 900 }}>
                   Rp {parseInt(book.price).toLocaleString()}
                 </p>
               )}
             </div>
 
-            <div style={{ fontSize: 18, lineHeight: "1.6" }}>
+            {/* INFO */}
+            <div style={{ marginTop: 20 }}>
               <p>
                 <strong>Genre:</strong> {book.genre}
               </p>
@@ -199,7 +231,7 @@ export default function BookDetail() {
             {/* ACTION */}
             <div style={{ marginTop: 35 }}>
               {role === "admin" ? (
-                <div style={{ display: "flex", gap: 15 }}>
+                <div style={{ display: "flex", gap: 20 }}>
                   <Link
                     to={`/edit-book/${book.id}`}
                     style={{
@@ -208,8 +240,6 @@ export default function BookDetail() {
                       color: "#fff",
                       borderRadius: 10,
                       textDecoration: "none",
-                      fontSize: 17,
-                      fontWeight: 600,
                     }}
                   >
                     Edit Book
@@ -223,8 +253,6 @@ export default function BookDetail() {
                       color: "#fff",
                       borderRadius: 10,
                       border: "none",
-                      fontSize: 17,
-                      fontWeight: 600,
                       cursor: "pointer",
                     }}
                   >
@@ -233,6 +261,7 @@ export default function BookDetail() {
                 </div>
               ) : (
                 <button
+                  onClick={handleAddToCart}
                   style={{
                     padding: "16px 40px",
                     background: "#28a745",
@@ -242,10 +271,9 @@ export default function BookDetail() {
                     fontSize: 20,
                     cursor: "pointer",
                     fontWeight: 700,
-                    marginTop: 10,
                   }}
                 >
-                  Beli Buku
+                  Add to Cart
                 </button>
               )}
             </div>
