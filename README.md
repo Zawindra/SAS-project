@@ -1,20 +1,21 @@
-📚 BookStore — Fullstack MERN Project
+📚 BookStore — Fullstack Project
 
-BookStore adalah aplikasi toko buku sederhana berbasis Node.js (Express), MySQL, dan React Vite.
-Aplikasi ini mendukung:
+🚀 Fitur Utama
 
-Upload buku (Admin)
+✨ Upload buku (Admin)
 
-Edit & Hapus buku (Admin)
+📝 Edit & hapus buku
 
-User login/register
+👥 Login & Register
 
-Guest mode (tanpa login bisa melihat buku)
+👤 Guest mode (bisa lihat buku tanpa login)
 
-Add to cart (untuk user)
+🛒 Add to Cart (User)
 
-Keranjang dengan tombol + dan Diskon buku + perhitungan otomatis
+➕➖ Keranjang bisa tambah/kurang item
 
-SweetAlert2 untuk notifikasi
+🎯 Perhitungan diskon otomatis
 
-Menampilkan cover & detail buku
+🔔 SweetAlert2 notifikasi
+
+📘 Detail & cover buku
