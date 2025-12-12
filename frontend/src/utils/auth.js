@@ -1,5 +1,3 @@
-// src/utils/auth.js
-
 // SIMPAN TOKEN + USER DATA
 export function saveAuth(token, user) {
   localStorage.setItem("token", token);

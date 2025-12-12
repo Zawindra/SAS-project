@@ -26,42 +26,50 @@ export default function BookDetail() {
   // ADD TO CART (WITH QTY)
   // =========================
   const handleAddToCart = () => {
-    if (!isLoggedIn()) {
-      return Swal.fire({
-        icon: "info",
-        title: "Login Required",
-        text: "You must login before buying books.",
-        confirmButtonColor: "#0b63a8",
-      }).then(() => navigate("/login"));
-    }
-
-    let cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-    // check if exists
-    const exist = cart.find((c) => c.id === book.id);
-
-    if (exist) {
-      exist.qty += 1; // tambah qty
-    } else {
-      cart.push({
-        id: book.id,
-        title: book.title,
-        qty: 1,
-      });
-    }
-
-    localStorage.setItem("cart", JSON.stringify(cart));
-
-    Swal.fire({
-      icon: "success",
-      title: "Added to Cart!",
-      text: `"${book.title}" has been added to your cart.`,
-      confirmButtonColor: "#28a745",
+  if (!isLoggedIn()) {
+    return Swal.fire({
+      title: "Login Required",
+      text: "You need an account to buy this book.",
+      icon: "info",
+      showCancelButton: true,
+      confirmButtonColor: "#0b63a8",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Login Now",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate("/login");
+      }
     });
+  }
 
-    // notify navbar
-    window.dispatchEvent(new Event("storage"));
-  };
+  // If logged in → normal add to cart
+  let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+  const exist = cart.find((c) => c.id === book.id);
+
+  if (exist) {
+    exist.qty += 1;
+  } else {
+    cart.push({
+      id: book.id,
+      title: book.title,
+      qty: 1,
+    });
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  Swal.fire({
+    icon: "success",
+    title: "Added to Cart!",
+    text: `"${book.title}" has been added to your cart.`,
+    confirmButtonColor: "#28a745",
+  });
+
+  window.dispatchEvent(new Event("storage"));
+};
 
   // =========================
 

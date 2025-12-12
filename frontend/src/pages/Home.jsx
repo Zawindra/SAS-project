@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import BookCard from "../components/BookCard";
+import BookCard from "../components/bookCard";
 import HeroBanner from "../components/HeroBanner";
 
 export default function Home() {
